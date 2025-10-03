@@ -22,8 +22,11 @@ export class RoleService {
     return this.roleModel.findByPk(id);
   }
 
-  findRoleByValue(value: string) {
-    return this.roleModel.findOne({ where: { value: value.toUpperCase() } });
+  async findRoleByValue(value: string) {
+    const role = await this.roleModel.findOne({
+      where: { value: value.toUpperCase() },
+    });
+    return role?.dataValues
   }
 
   update(id: number, updateRoleDto: UpdateRoleDto) {

@@ -5,6 +5,8 @@ import { InjectModel } from "@nestjs/sequelize";
 import { User } from "./models/user.model";
 import { RoleService } from "../role/role.service";
 import { Role } from "../role/models/role.model";
+import { AddRemoveRoleDto } from "./dto/add-removev-role.dto";
+import { ActivateUserDto } from "./dto/activate-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -20,22 +22,25 @@ export class UsersService {
     }
     const newUser = await this.userModel.create(createUserDto);
     await newUser.$set("role", [role.id]);
+
     return newUser;
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userModel.findAll({ include: { all: true } });
   }
 
   async findUserByemail(email: string) {
     const user = await this.userModel.findOne({
       where: { email },
-      include: {model:Role,
-        attributes:["value"],
-        through:{attributes:[]}
+      include: {
+        model: Role,
+        attributes: ["value"],
+        through: { attributes: [] },
       },
     });
-    return {user,usd:user?.dataValues};
+
+    return user?.dataValues;
   }
 
   findOne(id: number) {
@@ -48,5 +53,59 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async addRole(addRemoveRoleDto: AddRemoveRoleDto) {
+    const { userId, value } = addRemoveRoleDto;
+
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException("Bunday foydalanuchi yo'q");
+    }
+    const role = await this.roleService.findRoleByValue(value);
+    if (!role) {
+      throw new NotFoundException("Bunday role yo'q");
+    }
+    await user.$add("role", role.id);
+    const updatedUser = await this.userModel.findByPk(userId, {
+        include: {
+          model: Role,
+          attributes: ["value"],
+          through: { attributes: [] },
+        },
+    });
+    return updatedUser?.dataValues;
+  }
+
+  async romoveRole(addRemoveRoleDto: AddRemoveRoleDto) {
+    const { userId, value } = addRemoveRoleDto;
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException("Bunday foydalanuchi yo'q");
+    }
+    const role = await this.roleService.findRoleByValue(value);
+    if (!role) {
+      throw new NotFoundException("Bunday role yo'q");
+    }
+    await user.$remove("role", role.id);
+    const updatedUser = await this.userModel.findByPk(userId, {
+      include: {
+        model: Role,
+        attributes: ["value"],
+        through: { attributes: [] },
+      },
+    });
+    return updatedUser;
+  }
+
+  async activateUser(activateUserDto:ActivateUserDto){
+    const { userId } = activateUserDto;
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException("Bunday foydalanuchi yo'q");
+    }
+    user.is_active=true
+    await user.save()
+    return {message:"User activated"}
   }
 }

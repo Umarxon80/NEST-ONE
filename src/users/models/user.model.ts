@@ -1,6 +1,7 @@
 import {  BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript";
 import { Role } from "../../role/models/role.model";
 import { UserRole } from "./user-role.model";
+import { ApiProperty } from "@nestjs/swagger";
 
 interface IUserCreationAttr{
     name:string,
@@ -10,6 +11,10 @@ interface IUserCreationAttr{
 
 @Table({ tableName: "user" })
 export class User extends Model<User, IUserCreationAttr> {
+  @ApiProperty({
+    example: 1,
+    description: "Foydalanuvchi Idsi",
+  })
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -17,12 +22,20 @@ export class User extends Model<User, IUserCreationAttr> {
   })
   declare id: number;
 
+  @ApiProperty({
+    example: "user1",
+    description: "Foydalanuvchi ismi",
+  })
   @Column({
     type: DataType.STRING(50),
     allowNull: false,
   })
   declare name: string;
 
+  @ApiProperty({
+    example: "user1@gmail.com",
+    description: "Foydalanuvchi emaili",
+  })
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -37,10 +50,10 @@ export class User extends Model<User, IUserCreationAttr> {
 
   @Column({
     type: DataType.BOOLEAN(),
-    defaultValue:false
+    defaultValue: false,
   })
   declare is_active: boolean;
 
-  @BelongsToMany(()=>Role, ()=>UserRole)
-  role:Role[]
+  @BelongsToMany(() => Role, () => UserRole)
+  role: Role[];
 }

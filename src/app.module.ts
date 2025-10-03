@@ -30,7 +30,7 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.PG_DATABASE,
       models: [Company,Builder,Machine,Driver,MachineDriver,Role,UserRole,User],
       autoLoadModels: true,
-      logging: true,
+      logging: false,
       sync: { alter: true },
     }),
     CompanyModule,
