@@ -3,9 +3,10 @@ import { DriverService } from './driver.service';
 import { DriverController } from './driver.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Driver } from './models/driver.model';
+import { FileModule } from '../file/file.module';
 
 @Module({
-  imports:[SequelizeModule.forFeature([Driver])],
+  imports:[SequelizeModule.forFeature([Driver]),FileModule],
   controllers: [DriverController],
   providers: [DriverService],
 })

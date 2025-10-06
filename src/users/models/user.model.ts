@@ -1,12 +1,18 @@
-import {  BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript";
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  Model,
+  Table,
+} from "sequelize-typescript";
 import { Role } from "../../role/models/role.model";
 import { UserRole } from "./user-role.model";
 import { ApiProperty } from "@nestjs/swagger";
 
-interface IUserCreationAttr{
-    name:string,
-    email:string,
-    password:string
+interface IUserCreationAttr {
+  name: string;
+  email: string;
+  password: string;
 }
 
 @Table({ tableName: "user" })

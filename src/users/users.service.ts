@@ -21,7 +21,7 @@ export class UsersService {
       throw new NotFoundException("Bunday role yo'q");
     }
     const newUser = await this.userModel.create(createUserDto);
-    await newUser.$set("role", [role.id]);
+    // await newUser.$set("role", [role.id]);
 
     return newUser;
   }
@@ -44,15 +44,16 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.userModel.findByPk(id);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    await this.userModel.destroy({where:{id}})
+    return `Foydalanuvchi ochirildi`;
   }
 
   async addRole(addRemoveRoleDto: AddRemoveRoleDto) {
@@ -68,11 +69,11 @@ export class UsersService {
     }
     await user.$add("role", role.id);
     const updatedUser = await this.userModel.findByPk(userId, {
-        include: {
-          model: Role,
-          attributes: ["value"],
-          through: { attributes: [] },
-        },
+      include: {
+        model: Role,
+        attributes: ["value"],
+        through: { attributes: [] },
+      },
     });
     return updatedUser?.dataValues;
   }
@@ -98,14 +99,14 @@ export class UsersService {
     return updatedUser;
   }
 
-  async activateUser(activateUserDto:ActivateUserDto){
+  async activateUser(activateUserDto: ActivateUserDto) {
     const { userId } = activateUserDto;
     const user = await this.userModel.findByPk(userId);
     if (!user) {
       throw new NotFoundException("Bunday foydalanuchi yo'q");
     }
-    user.is_active=true
-    await user.save()
-    return {message:"User activated"}
+    user.is_active = true;
+    await user.save();
+    return { message: "User activated" };
   }
 }

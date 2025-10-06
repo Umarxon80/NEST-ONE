@@ -1,26 +1,32 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { CompanyModule } from './company/company.module';
+import { CompanyModule } from "./company/company.module";
 import { Company } from "./company/models/company.model";
-import { BuilderModule } from './builder/builder.module';
+import { BuilderModule } from "./builder/builder.module";
 import { Builder } from "./builder/models/builder.model";
-import { DriverModule } from './driver/driver.module';
-import { MachineModule } from './machine/machine.module';
+import { DriverModule } from "./driver/driver.module";
+import { MachineModule } from "./machine/machine.module";
 import { Machine } from "./machine/models/machine.model";
 import { Driver } from "./driver/models/driver.model";
-import { MachineDriverModule } from './machine-driver/machine-driver.module';
+import { MachineDriverModule } from "./machine-driver/machine-driver.module";
 import { MachineDriver } from "./machine-driver/models/machine-driver.model";
-import { RoleModule } from './role/role.module';
+import { RoleModule } from "./role/role.module";
 import { Role } from "./role/models/role.model";
-import { UsersModule } from './users/users.module';
+import { UsersModule } from "./users/users.module";
 import { UserRole } from "./users/models/user-role.model";
 import { User } from "./users/models/user.model";
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from "./auth/auth.module";
+import { FileModule } from './file/file.module';
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "node:path";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    ServeStaticModule.forRoot({
+      rootPath:join(__dirname,"../static")
+    }),
     SequelizeModule.forRoot({
       dialect: "postgres",
       host: process.env.PG_HOST,
@@ -28,7 +34,16 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE,
-      models: [Company,Builder,Machine,Driver,MachineDriver,Role,UserRole,User],
+      models: [
+        Company,
+        Builder,
+        Machine,
+        Driver,
+        MachineDriver,
+        Role,
+        UserRole,
+        User,
+      ],
       autoLoadModels: true,
       logging: false,
       sync: { alter: true },
@@ -41,6 +56,7 @@ import { AuthModule } from './auth/auth.module';
     RoleModule,
     UsersModule,
     AuthModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],

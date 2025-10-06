@@ -4,10 +4,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function start() {
-  const PORT = process.env.PORT
+  const PORT = process.env.PORT 
   const app = await NestFactory.create(AppModule,{logger:["error","warn"]});
 
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist:true,
+    forbidNonWhitelisted:true,
+    transform:true
+  }))
 
   const config = new DocumentBuilder()
     .setTitle("NEST-ONE Project")

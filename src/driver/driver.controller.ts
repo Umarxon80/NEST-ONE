@@ -1,15 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { DriverService } from './driver.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('driver')
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
   @Post()
-  create(@Body() createDriverDto: CreateDriverDto) {
-    return this.driverService.create(createDriverDto);
+  @UseInterceptors(FileInterceptor("image"))
+  create(
+    @Body() createDriverDto: CreateDriverDto,
+    @UploadedFile() image:any
+  ) {
+    return this.driverService.create(createDriverDto,image);
   }
 
   @Get()
